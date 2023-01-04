@@ -3,7 +3,7 @@ Module      : Chat
 Description : This module includes all the chat related functions
 -}
 module Chat (
-    -- * Chat
+    -- * Functions
     initialiseSocialNetwork,
     createChat,
     findChat,
@@ -24,7 +24,7 @@ initialiseSocialNetwork = do
 -- |The 'createChat' function adds a chat to the map storing all messages
 createChat :: SocialNetwork -> ChatID -> IO ()
 createChat (SocialNetwork m) cid = do
-    let newChat = []
+    let newChat = Chat []
     messages <- takeMVar m
     putMVar m (Map.insert cid newChat messages)
     -- Potential improvement to avoid space leaks
@@ -46,7 +46,8 @@ sendMessage (SocialNetwork m) cid message = do
     let currChat = Map.lookup cid messages
     case currChat of
         Just chat -> do
-            let newChat = chat ++ [message]
+            -- let newChat = chat ++ [message]
+            let newChat = addToChat chat message
             putMVar m (Map.insert cid newChat messages)
         Nothing -> do
-            putMVar m (Map.insert cid [message] messages)
+            putMVar m (Map.insert cid (Chat [message]) messages)

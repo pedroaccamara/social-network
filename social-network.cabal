@@ -27,6 +27,7 @@ library
   exposed-modules:
       Chat
       Lib
+      Thread
       Types
   other-modules:
       Paths_social_network

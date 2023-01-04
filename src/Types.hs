@@ -3,7 +3,7 @@ Module      : Types
 Description : This module includes all the type definitions required throughout the application
 -}
 module Types (
-    -- * Functions
+    -- * Types
     User (..),
     Message (..),
     Chat (..),
@@ -11,6 +11,8 @@ module Types (
     ChatID (..),
     Messages (..),
     SocialNetwork (..),
+    -- * Functions
+    addToChat,
 ) where
 
 import Data.Map (Map)
@@ -23,13 +25,25 @@ data User = User {
     userid :: String,
     -- | The 'username' method returns a User's username
     username :: String
-} deriving (Show)
+}
+
+instance Show User where
+    show u = show $ userid u ++ "@" ++ username u
 
 -- | The Message type will keep track of a full interaction between two users
 type Message = String
 
 -- | The Chat type will keep track of a full interaction between two users
-type Chat = [Message]
+newtype Chat = Chat [Message]
+
+-- | The 'addToChat' function allows for a message to be added to a chat instance
+addToChat :: Chat -> Message -> Chat
+addToChat (Chat c) m = Chat (c ++ [m])
+
+-- | Defining Chat as an instance of show to set the desired output
+instance Show Chat where
+    show (Chat []) = show ""
+    show (Chat c) = show (head c) ++ show (Chat $ tail c)
 
 -- | A Communication data structure will help map user id's to the message record between them
 data Communication = Communication User User
