@@ -16,13 +16,13 @@ main = do
     putStrLn "Starting the Socialnetwork..."
     putStrLn "============================="
     sn <- initialiseSocialNetwork
-    let numUsers = 2
+    let numUsers = 2 :: Int
     putStrLn $ "Working with " ++ show numUsers ++ " users"
     putStrLn "============================="
-    let u :: User; u = User {
+    let u = User {
         userid = "0",
         username = "calvin_coolidge"
-    }
+    }:: User
     putStrLn "Waiting 2 secs"
     _ <- forkIO $ userThread sn u
     threadDelay (10^6 * 2)
@@ -30,14 +30,6 @@ main = do
     -- generateUserThreads sn numUsers
     -- createChat sn "01"
     -- sendMessage sn "01" "Heyyoooo"
-    findChat sn "01" >>= (\x ->
-        case x of
-            Just chat -> do
-                putStrLn $ show chat
-            Nothing -> do
-                print "Empty chat")
-    -- findChat sn "01" >>= \case
-    --         Just chat -> do print chat
-    --         Nothing -> do print "Empty chat"
+    findChat sn "01" >>= displayChat
     -- sendMessage sn "02" "Heyyoooo 2"
     -- findChat sn "02" >>= print

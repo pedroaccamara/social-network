@@ -5,18 +5,18 @@ Description : This module includes all the type definitions required throughout 
 module Types (
     -- * Types
     User (..),
-    Message (..),
+    Message,
     Chat (..),
     Communication (..),
-    ChatID (..),
-    Messages (..),
+    ChatID,
+    Messages,
     SocialNetwork (..),
     -- * Functions
     addToChat,
 ) where
 
 import Data.Map (Map)
-import qualified Data.Map as Map
+-- import qualified Data.Map as Map
 import Control.Concurrent
 
 -- | This is the data structure that will define a User type
@@ -28,10 +28,13 @@ data User = User {
 }
 
 instance Show User where
-    show u = show $ userid u ++ "@" ++ username u
+    show u = username u ++ "#" ++ userid u
 
 -- | The Message type will keep track of a full interaction between two users
 type Message = String
+
+-- instance Show Message where
+--     show (Message m) = m
 
 -- | The Chat type will keep track of a full interaction between two users
 newtype Chat = Chat [Message]
@@ -42,8 +45,9 @@ addToChat (Chat c) m = Chat (c ++ [m])
 
 -- | Defining Chat as an instance of show to set the desired output
 instance Show Chat where
-    show (Chat []) = show ""
-    show (Chat c) = show (head c) ++ show (Chat $ tail c)
+    show (Chat []) = ""
+    show (Chat c) = head c ++ show (Chat $ tail c)
+    -- show (Chat c) = unlines c -- REVISIT
 
 -- | A Communication data structure will help map user id's to the message record between them
 data Communication = Communication User User

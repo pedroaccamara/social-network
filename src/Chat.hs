@@ -8,6 +8,7 @@ module Chat (
     createChat,
     findChat,
     sendMessage,
+    displayChat,
 ) where
 
 import Types
@@ -51,3 +52,9 @@ sendMessage (SocialNetwork m) cid message = do
             putMVar m (Map.insert cid newChat messages)
         Nothing -> do
             putMVar m (Map.insert cid (Chat [message]) messages)
+
+-- |The 'displayChat' function takes a (Maybe Chat) and pretty prints it
+displayChat :: Maybe Chat -> IO ()
+displayChat x = case x of
+    Just chat -> do print chat
+    Nothing -> print "Empty chat"
