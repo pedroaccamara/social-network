@@ -58,5 +58,14 @@ type ChatID = String
 -- | The Messages type is a map containing all messages between users in this socialnetwork 
 type Messages = Map ChatID Chat
 
--- | The SocialNetwork will be accessible by each user thread so that users can send messages through it
-newtype SocialNetwork = SocialNetwork (MVar Messages)
+-- | The Key type is a type for strings to be used as map entries' lookup id's
+type Key = String
+
+-- | The Value type is a type for strings to be used as map entries' values
+type Value = String
+
+-- | The Database type is a type for any sort of more generic data required to be kept for the socialnetwork to function
+type Database = Map Key Value
+
+-- | The SocialNetwork will be accessible by each user thread so that users can send messages through it and alter its state
+data SocialNetwork = SocialNetwork (MVar Database) (MVar Messages)

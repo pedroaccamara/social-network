@@ -1,4 +1,4 @@
-{-|
+{-| -- REVISIT
 Module      : Types
 Description : This module includes all the type definitions required throughout the application
 -}

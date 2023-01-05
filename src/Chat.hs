@@ -4,27 +4,25 @@ Description : This module includes all the chat related functions
 -}
 module Chat (
     -- * Functions
-    initialiseSocialNetwork,
     createChat,
     findChat,
     sendMessage,
     displayChat,
 ) where
 
-import Types
+import Types (
+    -- * Types  -- REVISIT
+    SocialNetwork(..), ChatID, Message, Chat(..),
+    -- * Functions
+    addToChat,
+    )
 import Control.Concurrent -- Chan, newChan, writeChan, readChan
-import Data.Map (Map)
+-- import Data.Map (Map)
 import qualified Data.Map as Map
-
--- |The 'initialiseSocialNetwork' function creates the map that will store all messages
-initialiseSocialNetwork :: IO SocialNetwork
-initialiseSocialNetwork = do
-    m <- newMVar Map.empty
-    return (SocialNetwork m)
 
 -- |The 'createChat' function adds a chat to the map storing all messages
 createChat :: SocialNetwork -> ChatID -> IO ()
-createChat (SocialNetwork m) cid = do
+createChat (SocialNetwork _ m) cid = do
     let newChat = Chat []
     messages <- takeMVar m
     putMVar m (Map.insert cid newChat messages)
@@ -35,14 +33,14 @@ createChat (SocialNetwork m) cid = do
 
 -- |The 'findChat' function looks up for a chat with the given chatid as key
 findChat :: SocialNetwork -> ChatID -> IO (Maybe Chat)
-findChat (SocialNetwork m) cid = do
+findChat (SocialNetwork _ m) cid = do
     messages <- takeMVar m
     putMVar m messages
     return (Map.lookup cid messages)
 
 -- |The 'sendMessage' function adds a message to a chat between two users
 sendMessage :: SocialNetwork -> ChatID -> Message -> IO ()
-sendMessage (SocialNetwork m) cid message = do
+sendMessage (SocialNetwork _ m) cid message = do
     messages <- takeMVar m
     let currChat = Map.lookup cid messages
     case currChat of
