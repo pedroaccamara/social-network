@@ -2,7 +2,7 @@ module Rand (
     main2,
 ) where
 
-import Lib
+import User
 
 main2 :: IO ()
 main2 = do

@@ -4,13 +4,17 @@ Description : This module includes all the type definitions required throughout 
 -}
 module Types (
     -- * Types
+    UserID,
     User (..),
+    Userbase,
     Message,
     Chat (..),
     Communication (..),
     ChatID,
     Messages,
     SocialNetwork (..),
+    Key,
+    Value,
     -- * Functions
     addToChat,
 ) where
@@ -19,10 +23,13 @@ import Data.Map (Map)
 -- import qualified Data.Map as Map
 import Control.Concurrent
 
+-- | The UserID type represents strings to be used as keys for Userbase entries
+type UserID = String
+
 -- | This is the data structure that will define a User type
 data User = User {
     -- | The 'userid' method returns a User's id
-    userid :: String,
+    userid :: UserID,
     -- | The 'username' method returns a User's username
     username :: String
 }
@@ -67,5 +74,8 @@ type Value = String
 -- | The Database type is a type for any sort of more generic data required to be kept for the socialnetwork to function
 type Database = Map Key Value
 
+-- | The Userbase type is a map to store all users registered in the socialnetwork
+type Userbase = Map UserID User
+
 -- | The SocialNetwork will be accessible by each user thread so that users can send messages through it and alter its state
-data SocialNetwork = SocialNetwork (MVar Database) (MVar Messages)
+data SocialNetwork = SocialNetwork (MVar Database) (MVar Userbase) (MVar Messages)

@@ -4,7 +4,7 @@ Description : This module includes the library of all help functions
 -}
 module Lib (
     -- * Functions
-    someFun,
+    someFunc,
 ) where
 
 someFunc :: IO ()
