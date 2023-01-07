@@ -78,4 +78,4 @@ type Database = Map Key Value
 type Userbase = Map UserID User
 
 -- | The SocialNetwork will be accessible by each user thread so that users can send messages through it and alter its state
-data SocialNetwork = SocialNetwork (MVar Database) (MVar Userbase) (MVar Messages)
+data SocialNetwork = SocialNetwork (MVar Database) (MVar Userbase) (MVar Messages) -- REVISIT maybe adding an 'Atomic Operations' mvar to make sure messages don't go over 100

@@ -61,7 +61,7 @@ getUser (SocialNetwork _ u _) uid = do
 
 -- |The 'loop' function is auxiliary to 'chooseAnotherUser' to make sure a randomly selected userid does not coincide with that of the user choosing another one
 loop :: SocialNetwork -> User -> Int -> IO User
-loop sn chooser numUsers = do
+loop sn chooser numUsers = do -- REVISIT create array without the users id
     randNum <- randomRIO (1,numUsers) :: IO Int
     let userID = show randNum
     if userID == userid chooser then do
@@ -73,7 +73,7 @@ loop sn chooser numUsers = do
 chooseAnotherUser :: SocialNetwork -> User -> IO User
 chooseAnotherUser sn chooser = do
     numUsers <- getNumberOfUsers sn
-    loop sn chooser numUsers
+    loop sn chooser numUsers -- REVISIT create array without the users id
 
 databaseValueFromKey :: SocialNetwork -> Key -> IO (Maybe Value)
 databaseValueFromKey (SocialNetwork d _ _) key = do

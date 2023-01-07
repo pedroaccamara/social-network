@@ -45,7 +45,6 @@ sendMessage (SocialNetwork _ _ m) cid message = do
     let currChat = Map.lookup cid messages
     case currChat of
         Just chat -> do
-            -- let newChat = chat ++ [message]
             let newChat = addToChat chat message
             putMVar m (Map.insert cid newChat messages)
         Nothing -> do
