@@ -10,7 +10,7 @@ module Thread (
 
 import Types (SocialNetwork, User(..))
 import Chat (sendMessage)
-import SocialNetwork (incrementSentMsgs, chooseAnotherUser, incrementUserReceivedMsgs, getSentMsgsCount)
+import SocialNetwork (incrementSentMsgs, chooseAnotherUser, incrementUserReceivedMsgs, getSentMsgsCount, startAtomicOp, finishAtomicOp)
 import User (getRandomUsername)
 
 import Control.Concurrent (forkIO, newEmptyMVar, putMVar, takeMVar, threadDelay)
@@ -26,13 +26,17 @@ userThread sn u = loop (0 :: Int) :: IO ()
         messageReceiver <- chooseAnotherUser sn u
         putStrLn $ userid u ++ " sending a message to " ++ userid messageReceiver
         _ <- threadDelay <$> getDelay
+        startAtomicOp sn
         total <- getSentMsgsCount sn
         -- if (read total :: Int) >= limitMessages then do putStrLn "Before msg"; return () -- REVISIT
-        if (read total :: Int) >= limitMessages then return ()
+        if (read total :: Int) >= limitMessages then do
+            finishAtomicOp sn
+            return ()
         else do
             sendMessage sn (userid u ++ userid messageReceiver) ("\n" ++ show u ++ ":\nMessage " ++ show i ++ "\n")
             incrementSentMsgs sn
             incrementUserReceivedMsgs sn messageReceiver
+            finishAtomicOp sn
             newTotal <- getSentMsgsCount sn
             -- if (read newTotal :: Int) >= limitMessages then do putStrLn "After msg";return () -- REVISIT
             if (read newTotal :: Int) >= limitMessages then return ()

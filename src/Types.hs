@@ -20,7 +20,6 @@ module Types (
 ) where
 
 import Data.Map (Map)
--- import qualified Data.Map as Map
 import Control.Concurrent
 
 -- | The UserID type represents strings to be used as keys for Userbase entries
@@ -34,6 +33,7 @@ data User = User {
     username :: String
 }
 
+-- | Defining User's behaviour for how to display a user instance
 instance Show User where
     show u = username u ++ "#" ++ userid u
 
@@ -78,4 +78,4 @@ type Database = Map Key Value
 type Userbase = Map UserID User
 
 -- | The SocialNetwork will be accessible by each user thread so that users can send messages through it and alter its state
-data SocialNetwork = SocialNetwork (MVar Database) (MVar Userbase) (MVar Messages) -- REVISIT maybe adding an 'Atomic Operations' mvar to make sure messages don't go over 100
+data SocialNetwork = SocialNetwork (MVar Database) (MVar Userbase) (MVar Messages) (MVar ()) -- REVISIT maybe adding an 'Atomic Operations' mvar to make sure messages don't go over 100
