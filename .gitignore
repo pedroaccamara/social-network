@@ -1,3 +1,5 @@
 .stack-work/
 .vscode/
 *~
+data/quotes.txt
+data/raw.txt

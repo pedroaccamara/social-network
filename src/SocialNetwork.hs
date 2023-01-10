@@ -60,7 +60,7 @@ getNumberOfUsers (SocialNetwork _ u _ _) = do
     putMVar u userbase
     return $ Map.size userbase
     -- let numUsers = Map.size userbase
-    -- return numUsers
+    -- return numUsers -- REVISIT
 
 -- |The 'getUser' function returns the socialnetwork user with the given userid
 getUser :: SocialNetwork -> UserID -> IO User

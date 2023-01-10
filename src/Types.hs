@@ -1,3 +1,5 @@
+-- {-# LANGUAGE OverloadedStrings #-}
+
 {-|
 Module      : Types
 Description : This module includes all the type definitions required throughout the application
@@ -7,7 +9,7 @@ module Types (
     UserID,
     User (..),
     Userbase,
-    Message,
+    Message(..),
     Chat (..),
     Communication (..),
     ChatID,
@@ -21,6 +23,8 @@ module Types (
 
 import Data.Map (Map)
 import Control.Concurrent
+
+import Data.Text(justifyRight, pack, unpack)
 
 -- | The UserID type represents strings to be used as keys for Userbase entries
 type UserID = String
@@ -38,14 +42,22 @@ instance Show User where
     show u = username u ++ "#" ++ userid u
 
 -- | The Message type will keep track of a full interaction between two users
-type Message = String
+-- type Message = String
 
--- instance Show Message where
---     show (Message m) = m
+data Message = Message User User Bool String
+
+-- | 'justify' equally justifies any string that should be justified
+justify :: String -> String
+justify text = unpack $ justifyRight 80 ' ' $ pack text
+
+instance Show Message where
+    show (Message u _ b m) = let (userline, messageLine) = if b then (show u ++ ":", m) else (justify $ ":" ++ show u, justify m)  in
+        "\n" ++ userline ++ "\n" ++ messageLine ++ "\n"
 
 -- | The Chat type will keep track of a full interaction between two users
 newtype Chat = Chat [Message]
 
+-- REVISIT this could go to Chat.hs
 -- | The 'addToChat' function allows for a message to be added to a chat instance
 addToChat :: Chat -> Message -> Chat
 addToChat (Chat c) m = Chat (c ++ [m])
@@ -53,7 +65,7 @@ addToChat (Chat c) m = Chat (c ++ [m])
 -- | Defining Chat as an instance of show to set the desired output
 instance Show Chat where
     show (Chat []) = ""
-    show (Chat c) = head c ++ show (Chat $ tail c)
+    show (Chat c) = show (head c) ++ show (Chat $ tail c)
     -- show (Chat c) = unlines c -- REVISIT
 
 -- | A Communication data structure will help map user id's to the message record between them

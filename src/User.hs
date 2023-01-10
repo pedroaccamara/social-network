@@ -5,7 +5,12 @@ Description : This module includes all the User related functions
 module User (
     -- * Functions
     getRandomUsername,
+    getUids,
+    getSuids,
+    earlierUser,
 ) where
+
+import Types (User(..))
 
 import System.Random (randomRIO)
 
@@ -24,3 +29,21 @@ getRandomName = do
 createUserName :: String -> String
 createUserName "" = ""
 createUserName fullname = let names = words fullname in head names ++ concatMap ("_" ++) (tail names)
+
+-- |The 'getUids' function receives two users and returns their user ids as strings
+getSuids :: (User, User) -> (String, String)
+getSuids (u1, u2) = do
+    (userid u1, userid u2)
+
+-- |The 'getUids' function receives two users and returns their user ids as ints
+getUids :: (User, User) -> (Int, Int)
+getUids (u1, u2) = do
+    let uid1 = userid u1
+    let uid2 = userid u2
+    (read uid1 :: Int, read uid2 :: Int)
+
+-- |The 'earlierUser' function receives two users and returns whether the first user given as argument has a smaller user id than the second user
+earlierUser :: User -> User -> Bool
+earlierUser u1 u2 = do
+    let (uid1, uid2) = getUids (u1,u2)
+    uid1 < uid2
