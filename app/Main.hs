@@ -3,32 +3,51 @@ module Main (main) where
 -- import Lib
 import Chat (findChat, displayChat)
 import Thread (generateUserThreads)
-import SocialNetwork (initialiseSocialNetwork, getSentMsgsCount, getUserIDReceivedMsgsCount, finalOutput)
+import SocialNetwork (initialiseSocialNetwork, getUser, getSentMsgsCount, getUserIDReceivedMsgsCount, finalOutput)
 import Types (SocialNetwork)
 
 -- |The 'main' function starts the socialnetwork
 main :: IO ()
 main = do
-    putStrLn "============================="
+    hl
     putStrLn "Starting the Socialnetwork..."
-    putStrLn "============================="
-    let numUsers = 5 :: Int
+    hl
+    let numUsers = 10 :: Int
     sn <- initialiseSocialNetwork numUsers
-    putStrLn $ "Working with " ++ show numUsers ++ " users"
-    putStrLn "============================="
     generateUserThreads sn numUsers
     finalCount <- getSentMsgsCount sn
+    hl
     putStrLn $ "A total of " ++ finalCount ++ " messages have been sent"
+    hl
     finalOutput sn numUsers
-    loop sn
+    hl
+    interaction sn
 
-loop :: SocialNetwork -> IO ()
-loop sn = do
-    putStrLn "Want to see the chat between two particular users? E.g. 01? Write down their id's! (If you want to skip this, type Ctrl+C)"
+-- |The 'interaction' function allows for the user to give the app certain inputs to further examine the state of the socialnetwork upon completion of a messaging cycle
+interaction :: SocialNetwork -> IO ()
+interaction sn = do
+    putStrLn "Want to further examine the chat between two particular users? E.g. 01? Input their id's! (To exit, input X)"
     ids <- getLine :: IO String
-    -- putStrLn $ "You inputted " ++ show (length ids) ++ " letters" -- REVISIT
-    if length ids == 2 then findChat sn ids >>= displayChat
-    else do
-        msgsReceived <- getUserIDReceivedMsgsCount sn ids
-        putStrLn $ ids ++ " has received a total of " ++ msgsReceived
-    loop sn
+    case ids of
+        "X" -> do putStrLn "Thank you for overseeing the Socialnetwork App"
+        [_] -> do
+            user <- getUser sn ids
+            msgsReceived <- getUserIDReceivedMsgsCount sn ids
+            putStrLn $ show user ++ " has received a total of " ++ msgsReceived ++ " messages"
+            interaction sn
+        [suid1,suid2] -> do
+            findChat sn [suid1] [suid2] >>= displayChat
+            interaction sn
+        [suid1,'1','0'] -> do
+            findChat sn [suid1] "10" >>= displayChat
+            interaction sn
+        ['1','0',suid2] -> do
+            findChat sn "10" [suid2] >>= displayChat
+            interaction sn
+        _ -> do
+            putStrLn "That isn't an input I recognise, try one user id, or a pair of them"
+            interaction sn
+
+-- |The 'hl' function prints a horizontal line to separate outputs
+hl :: IO ()
+hl = putStrLn "============================="

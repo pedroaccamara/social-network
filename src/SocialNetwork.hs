@@ -5,6 +5,7 @@ Description : This module includes all the SocialNetwork related functions
 module SocialNetwork (
     -- * Functions
     initialiseSocialNetwork,
+    getUser,
     incrementSentMsgs,
     getSentMsgsCount,
     chooseAnotherUser,

@@ -21,11 +21,11 @@ userThread :: SocialNetwork -> User -> IO ()
 userThread sn u = loop (0 :: Int) :: IO ()
   where
     loop i = do
-        putStrLn $ "At loop " ++ show i
-        let limitMessages = 50
+        let limitMessages = 100
         messageReceiver <- chooseAnotherUser sn u
-        putStrLn $ userid u ++ " sending a message to " ++ userid messageReceiver
-        _ <- threadDelay <$> getDelay
+        del <- getDelay
+        threadDelay del
+        -- _ <- threadDelay <$> getDelay -- REVISIT
         startAtomicOp sn
         total <- getSentMsgsCount sn
         if (read total :: Int) >= limitMessages then do

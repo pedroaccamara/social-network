@@ -9,21 +9,15 @@ module Chat (
     sendMessage,
     displayChat,
     getRandomMessage,
+    addToChat,
 ) where
 
-import User (getSuids, earlierUser)
-import Types (
-    -- * Types  -- REVISIT
-    SocialNetwork(..), User(..), ChatID, Message(..), Chat(..),
-    -- * Functions
-    addToChat,
-    )
-
+import User (getSuids, earlierUser, earlierSuid)
+import Types (SocialNetwork(..), User(..), ChatID, Message(..), Chat(..))
 
 import Control.Concurrent (takeMVar, putMVar)
 import qualified Data.Map as Map
 import System.Random (randomRIO)
-
 
 -- |The 'createChat' function adds a chat to the map storing all messages
 createChat :: SocialNetwork -> ChatID -> IO ()
@@ -36,9 +30,14 @@ createChat (SocialNetwork _ _ m _) cid = do
     -- putMVar m messages'
     -- seq messages' (return ())
 
+-- | The 'addToChat' function allows for a message to be added to a chat instance
+addToChat :: Chat -> Message -> Chat
+addToChat (Chat c) m = Chat (c ++ [m])
+
 -- |The 'findChat' function looks up for a chat with the given chatid as key
-findChat :: SocialNetwork -> ChatID -> IO (Maybe Chat)
-findChat (SocialNetwork _ _ m _) cid = do
+findChat :: SocialNetwork -> String -> String -> IO (Maybe Chat)
+findChat (SocialNetwork _ _ m _) suid1 suid2 = do
+    let cid = resolveChatID suid1 suid2 
     messages <- takeMVar m
     putMVar m messages
     return (Map.lookup cid messages)
@@ -48,6 +47,11 @@ getChatID :: User -> User -> ChatID
 getChatID u1 u2 = do
     let (suid1, suid2) = getSuids (u1,u2)
     if earlierUser u1 u2 then suid1++suid2 else suid2++suid1
+
+-- |The 'resolveChatID' function takes two user ids as strings and returns their corresponding chat's id
+resolveChatID :: String -> String -> ChatID
+resolveChatID suid1 suid2 = do
+    if earlierSuid suid1 suid2 then suid1++suid2 else suid2++suid1
 
 -- |The 'sendMessage' function adds a message to a chat between two users
 sendMessage :: SocialNetwork -> User -> User -> String -> IO ()
@@ -60,22 +64,10 @@ sendMessage (SocialNetwork _ _ m _) u1 u2 text = do
     case currChat of
         Just chat -> do
             let newChat = addToChat chat message
-            -- putStrLn $ "\nInserting message:\n" ++ text ++ "\ninto chat: " ++ cid ++ "\n\n"
+            putStrLn $ "\nAdd here which users? Inserting message:\n" ++ text ++ "\ninto chat: " ++ cid ++ "\n\n" -- REVISIT
             putMVar m (Map.insert cid newChat messages)
         Nothing -> do
             putMVar m (Map.insert cid (Chat [message]) messages)
-
--- -- |The 'sendMessage' function adds a message to a chat between two users -- REVISIT
--- sendMessage :: SocialNetwork -> ChatID -> Message -> IO ()
--- sendMessage (SocialNetwork _ _ m _) cid message = do
---     messages <- takeMVar m
---     let currChat = Map.lookup cid messages
---     case currChat of
---         Just chat -> do
---             let newChat = addToChat chat message
---             putMVar m (Map.insert cid newChat messages)
---         Nothing -> do
---             putMVar m (Map.insert cid (Chat [message]) messages)
 
 -- |The 'displayChat' function takes a (Maybe Chat) and pretty prints it
 displayChat :: Maybe Chat -> IO ()

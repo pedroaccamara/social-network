@@ -8,6 +8,7 @@ module User (
     getUids,
     getSuids,
     earlierUser,
+    earlierSuid,
 ) where
 
 import Types (User(..))
@@ -47,3 +48,7 @@ earlierUser :: User -> User -> Bool
 earlierUser u1 u2 = do
     let (uid1, uid2) = getUids (u1,u2)
     uid1 < uid2
+
+-- |The 'earlierSuid' function receives two user ids as string and returns whether the first user id given as argument is smaller than the second user id
+earlierSuid :: String -> String -> Bool
+earlierSuid suid1 suid2 = (read suid1 :: Int) < (read suid2 :: Int)
