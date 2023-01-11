@@ -50,8 +50,7 @@ getChatID u1 u2 = do
 
 -- |The 'resolveChatID' function takes two user ids as strings and returns their corresponding chat's id
 resolveChatID :: String -> String -> ChatID
-resolveChatID suid1 suid2 = do
-    if earlierSuid suid1 suid2 then suid1++suid2 else suid2++suid1
+resolveChatID suid1 suid2 = if earlierSuid suid1 suid2 then suid1++suid2 else suid2++suid1
 
 -- |The 'sendMessage' function adds a message to a chat between two users
 sendMessage :: SocialNetwork -> User -> User -> String -> IO ()
@@ -64,7 +63,6 @@ sendMessage (SocialNetwork _ _ m _) u1 u2 text = do
     case currChat of
         Just chat -> do
             let newChat = addToChat chat message
-            putStrLn $ "\nAdd here which users? Inserting message:\n" ++ text ++ "\ninto chat: " ++ cid ++ "\n\n" -- REVISIT
             putMVar m (Map.insert cid newChat messages)
         Nothing -> do
             putMVar m (Map.insert cid (Chat [message]) messages)

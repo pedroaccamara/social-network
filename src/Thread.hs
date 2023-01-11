@@ -10,8 +10,7 @@ module Thread (
 
 import Types (SocialNetwork, User(..))
 import Chat (sendMessage, getRandomMessage)
-import SocialNetwork (incrementSentMsgs, chooseAnotherUser, incrementUserReceivedMsgs, getSentMsgsCount, startAtomicOp, finishAtomicOp)
-import User (getRandomUsername)
+import SocialNetwork (getUser, incrementSentMsgs, chooseAnotherUser, incrementUserReceivedMsgs, getSentMsgsCount, startAtomicOp, finishAtomicOp)
 
 import Control.Concurrent (forkIO, newEmptyMVar, putMVar, takeMVar, threadDelay)
 import System.Random (randomIO)
@@ -45,12 +44,8 @@ userThread sn u = loop (0 :: Int) :: IO ()
 generateUserThreads :: SocialNetwork -> Int -> IO ()
 generateUserThreads sn n | n == 0 = return ()
     | otherwise = do
-        randomUsername <- getRandomUsername
-        let u = User {
-            userid = show n,
-            username = randomUsername
-        } :: User
-        done <- newEmptyMVar
+        u <- getUser sn $ show n
+        done <- newEmptyMVar -- The done MVar will help blocking the main thread until all userThreads are "done"
         _ <- forkIO $ userThread sn u >> putMVar done ()
         generateUserThreads sn (n-1)
         takeMVar done
@@ -61,5 +56,4 @@ getDelay = do
     let power = 6 :: Int
     let sec = 10^power
     num <- randomIO :: IO Float
-    -- putStrLn $ "Waiting " ++ show (num*0.5) ++ " secs!" -- REVISIT
     return <$> round $ sec * num * 0.5

@@ -26,7 +26,7 @@ main = do
 -- |The 'interaction' function allows for the user to give the app certain inputs to further examine the state of the socialnetwork upon completion of a messaging cycle
 interaction :: SocialNetwork -> IO ()
 interaction sn = do
-    putStrLn "Want to further examine the chat between two particular users? E.g. 01? Input their id's! (To exit, input X)"
+    putStrLn "\nWant to further examine the chat between two users? Input their id's! E.g. 12 (or 21) prompts the chat between user 1 and 2. (To exit, input X):"
     ids <- getLine :: IO String
     case ids of
         "X" -> do putStrLn "Thank you for overseeing the Socialnetwork App"
