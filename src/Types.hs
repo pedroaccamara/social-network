@@ -47,7 +47,7 @@ justify text = unpack $ justifyRight 100 ' ' $ pack text
 
 -- | Message should be displayed as text justified to the left or right according to the user's priority in a chat
 instance Show Message where
-    show (Message u _ b m) = let (userline, messageLine) = if b then (show u ++ ":", m) else (justify $ ":" ++ show u, justify m)  in
+    show (Message u _ b m) = let (userline, messageLine) = if b then (show u ++ ":", m) else (justify $ ":" ++ show u, justify m) in
         "\n" ++ userline ++ "\n" ++ messageLine ++ "\n"
 
 -- | The Chat type will keep track of a full interaction between two users

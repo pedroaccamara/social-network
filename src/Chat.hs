@@ -5,11 +5,13 @@ Description : This module includes all the chat related functions
 module Chat (
     -- * Functions
     createChat,
+    addToChat,
     findChat,
+    getChatID,
+    resolveChatID,
     sendMessage,
     displayChat,
     getRandomMessage,
-    addToChat,
 ) where
 
 import User (getSuids, earlierUser, earlierSuid)
@@ -25,16 +27,12 @@ createChat (SocialNetwork _ _ m _) cid = do
     let newChat = Chat []
     messages <- takeMVar m
     putMVar m (Map.insert cid newChat messages)
-    -- Potential improvement to avoid space leaks
-    -- let messages' = Map.insert cid newChat messages
-    -- putMVar m messages'
-    -- seq messages' (return ())
 
 -- | The 'addToChat' function allows for a message to be added to a chat instance
 addToChat :: Chat -> Message -> Chat
 addToChat (Chat c) m = Chat (c ++ [m])
 
--- |The 'findChat' function looks up for a chat with the given chatid as key
+-- |The 'findChat' function looks for a chat between the 2 given user id's
 findChat :: SocialNetwork -> String -> String -> IO (Maybe Chat)
 findChat (SocialNetwork _ _ m _) suid1 suid2 = do
     let cid = resolveChatID suid1 suid2 

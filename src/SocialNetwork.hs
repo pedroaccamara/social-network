@@ -23,7 +23,7 @@ import qualified Data.Map as Map
 import Control.Concurrent (MVar, newEmptyMVar, newMVar, takeMVar, putMVar)
 import System.Random (randomRIO)
 
--- |The 'initialiseSocialNetwork' function creates the map that will store all messages
+-- |The 'initialiseSocialNetwork' function creates the maps that will store all indexed data to be kept during a messaging cycle
 initialiseSocialNetwork :: Int -> IO SocialNetwork
 initialiseSocialNetwork n = do
     d <- newMVar Map.empty
@@ -41,7 +41,7 @@ startAtomicOp (SocialNetwork _ _ _ atomic) = putMVar atomic ()
 finishAtomicOp :: SocialNetwork -> IO ()
 finishAtomicOp (SocialNetwork _ _ _ atomic) = takeMVar atomic
 
--- |The 'createUsers' functions will register a chosen number of users in a socialnetwork's userbase
+-- |The 'createUsers' functions will register a chosen number of users in the socialnetwork's userbase
 createUsers :: MVar Userbase -> Int -> IO ()
 createUsers u n | n == 0 = return ()
     | otherwise = do

@@ -1,6 +1,14 @@
-module Main (main) where
+{-|
+Module      : Main
+Description : This module is responsible for functions directly contributing to the Main flow of the app
+-}
+module Main (
+    -- * Functions
+    main,
+    interaction,
+    hl,
+) where
 
--- import Lib
 import Chat (findChat, displayChat)
 import Thread (generateUserThreads)
 import SocialNetwork (initialiseSocialNetwork, getUser, getSentMsgsCount, getUserIDReceivedMsgsCount, finalOutput)

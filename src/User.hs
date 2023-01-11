@@ -31,7 +31,7 @@ createUserName :: String -> String
 createUserName "" = ""
 createUserName fullname = let names = words fullname in head names ++ concatMap ("_" ++) (tail names)
 
--- |The 'getUids' function receives two users and returns their user ids as strings
+-- |The 'getSuids' function receives two users and returns their user ids as strings
 getSuids :: (User, User) -> (String, String)
 getSuids (u1, u2) = do
     (userid u1, userid u2)
